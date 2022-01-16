@@ -266,6 +266,12 @@ export class NatsTransport implements Transport {
             sessionId: senderSessionId,
           }
 
+          if (this.options.metadataValidator?.length) {
+            for (const validator of this.options.metadataValidator) {
+              validator(subject, { metadata, payload })
+            }
+          }
+
           const finalMetadata = this.options
             .metadataReducersAfterReceive
             ? this.mergeMetadata({

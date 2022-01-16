@@ -67,10 +67,7 @@ export interface Transport {
   dispose(): Promise<void>
 }
 
-export type MessageMetadata = Record<
-  string,
-  string | number | undefined
->
+export type MessageMetadata = Record<string, unknown>
 
 export type DefaultMessageMetadata = {
   userId: string
