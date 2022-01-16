@@ -21,9 +21,18 @@ export {
   type Authenticatior,
 } from './src/nats.transport.ts'
 
-import { callStackReducer } from './src/metadataReducers/callStack.reducer.ts'
-import { createdAtReducer } from './src/metadataReducers/createdAt.reducer.ts'
-import { transactionIdReducer } from './src/metadataReducers/transactionId.reducer.ts'
+import {
+  callStackReducer,
+  type CallStackMetadata,
+} from './src/metadataReducers/callStack.reducer.ts'
+import {
+  createdAtReducer,
+  type CreatedAtMetadata,
+} from './src/metadataReducers/createdAt.reducer.ts'
+import {
+  transactionIdReducer,
+  type TransactionMetadata,
+} from './src/metadataReducers/transactionId.reducer.ts'
 import { callStackValidator } from './src/metadataValidators/callStack.validator.ts'
 import { transactionDurationValidator } from './src/metadataValidators/transactionDuration.validator.ts'
 
@@ -38,9 +47,11 @@ export const metadataValidators = {
   transactionDurationValidator,
 }
 
-export type { CallStackMetadata } from './src/metadataReducers/callStack.reducer.ts'
-export type { CreatedAtMetadata } from './src/metadataReducers/createdAt.reducer.ts'
-export type { TransactionMetadata } from './src/metadataReducers/transactionId.reducer.ts'
+export type {
+  CreatedAtMetadata,
+  CallStackMetadata,
+  TransactionMetadata,
+}
 
 export { createTransportApi } from './src/api/createTransportApi.ts'
 export { createTransportClassHandlers } from './src/api/createTransportClassHandlers.ts'
