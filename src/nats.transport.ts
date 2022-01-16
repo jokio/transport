@@ -245,15 +245,20 @@ export class NatsTransport implements Transport {
 
           const subjectParts = msg.subject.split('.')
 
-          subject = subjectParts
-            .slice(0, subjectParts.length - 2)
-            .join('.')
+          subject = this.routePostfix
+            ? subjectParts.slice(0, subjectParts.length - 2).join('.')
+            : subjectParts.join('.')
+
           metadata = data.metadata
           payload = data.payload
 
-          const senderUserId = subjectParts[subjectParts.length - 2]
-          const senderSessionId =
-            subjectParts[subjectParts.length - 1]
+          const senderUserId = this.routePostfix
+            ? subjectParts[subjectParts.length - 2]
+            : undefined
+
+          const senderSessionId = this.routePostfix
+            ? subjectParts[subjectParts.length - 1]
+            : undefined
 
           const metadataWithUserInfo = {
             ...metadata,
