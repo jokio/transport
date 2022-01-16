@@ -11,8 +11,8 @@ await build({
   },
   mappings: {
     'https://deno.land/x/nats@v1.4.0/src/mod.ts': {
-      name: 'nats.ws',
-      version: '1.5.0',
+      name: 'nats',
+      version: '2.4.0',
     },
   },
   package: {
