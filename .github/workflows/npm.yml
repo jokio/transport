@@ -48,6 +48,12 @@ jobs:
       - name: build for npm
         run: deno run --no-check -A build_npm.ts ${GITHUB_REF/refs\/tags\/v/}
 
+      # Prepare npm for publish
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+
       # Publish
       - name: npm publish
         shell: bash
