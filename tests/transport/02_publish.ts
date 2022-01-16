@@ -33,9 +33,14 @@ export function testSuite_02(transport: Transport) {
         const route = 'path.to.route'
         const data = 'Hello'
 
-        const resultTask = new Promise(resolve =>
+        type Result = {
+          ctx: TransportContext<DefaultMessageMetadata>
+          route: string
+        }
+
+        const resultTask = new Promise<Result>(resolve =>
           transport.on(route, ctx => {
-            resolve({
+            resolve(<Result>{
               ctx,
               route,
             })
@@ -44,14 +49,12 @@ export function testSuite_02(transport: Transport) {
 
         transport.publish({ route, payload: data })
 
-        const result: any = await resultTask
-        const ctx =
-          result.ctx as TransportContext<DefaultMessageMetadata>
+        const result = await resultTask
 
         assertExists(result)
         assertEquals(result.route, route)
-        assertEquals(ctx.metadata.userId, undefined)
-        assertEquals(ctx.metadata.sessionId, undefined)
+        assertEquals(result.ctx.metadata.userId, undefined)
+        assertEquals(result.ctx.metadata.sessionId, undefined)
       }),
   )
 }
