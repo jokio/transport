@@ -264,7 +264,6 @@ export class NatsTransport implements Transport {
             ...metadata,
             userId: senderUserId,
             sessionId: senderSessionId,
-            connectionId: msg.sid,
           }
 
           const finalMetadata = this.options
