@@ -45,7 +45,7 @@ jobs:
         run: deno test -A --no-check
 
       # Build
-      - name: build for npm
+      - name: Build for npm
         run: deno run --no-check -A build_npm.ts ${GITHUB_REF/refs\/tags\/v/}
 
       # Prepare npm for publish
