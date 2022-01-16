@@ -73,7 +73,8 @@ export class NatsTransport implements Transport {
     const { userId = '', sessionId = '' } = data ?? {}
 
     this._state = 'INITIALISED'
-    this.routePostfix = `${userId}.${sessionId}`
+    this.routePostfix =
+      userId && sessionId ? `${userId}.${sessionId}` : ''
 
     return Promise.resolve()
   }
