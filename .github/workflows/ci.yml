@@ -1,0 +1,70 @@
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: ubuntu-latest
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+
+    strategy:
+      matrix:
+        mongo: ['5.0']
+    steps:
+      - name: Setup Environment
+        run: |
+          git config --global core.autocrlf false
+          git config --global core.eol lf
+
+      - name: Clone repository
+        uses: actions/checkout@v2
+
+      - name: Install Deno
+        uses: denolib/setup-deno@master
+        with:
+          deno-version: 1.x.x
+
+      - name: Log versions
+        run: |
+          deno --version
+
+      # Lint & Format
+      - name: Lint & Format TS
+        run: |
+          deno lint
+
+      # Start MongoDB
+      - name: Start MongoDB (Linux)
+        uses: wbari/start-mongoDB@v0.2
+        with:
+          mongoDBVersion: ${{ matrix.mongo }}
+
+     - name: Create Nats cluster
+        uses: onichandame/nats-action@master
+        with:
+          port: "4223" # multiple different ports will start a cluster. single port will start a single server
+
+      # Tests
+      - name: Test TS
+        run: deno test -A --coverage=./cov --doc
+
+      - name: Generate lcov
+        shell: bash
+        # excludes tests, testdata, and generated sources from coverage report
+        run: |
+          deno coverage ./cov/ --lcov --exclude="tests\\.(ts|js)|wasm\\.js|testdata|node/_tools|node/_module/cjs|node_modules" > cov.lcov
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        if: matrix.os != 'ubuntu-latest'
+        with:
+          name: ${{ matrix.os }}-${{ matrix.deno }}
+          files: cov.lcov
+
+      - name: Remove coverage report
+        shell: bash
+        if: matrix.os != 'ubuntu-latest'
+        run: |
+          rm -rf ./cov/
+          rm cov.lcov

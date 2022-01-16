@@ -1,5 +1,3 @@
-import { nats } from '../deps.ts'
-import { NatsTransport } from '../src/nats.transport.ts'
 import { Transport, TransportState } from '../src/transport.ts'
 import { assertEquals } from './test.deps.ts'
 

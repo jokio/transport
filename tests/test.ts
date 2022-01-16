@@ -5,7 +5,7 @@ import { testSuite_02 } from './transport/02_publish.ts'
 import { testSuite_03 } from './transport/03_execute.ts'
 
 const transport = new NatsTransport({
-  natsServerUrls: ['nats://localhost:4223'],
+  natsServerUrls: ['nats://127.0.0.1:4223'],
   StringCodec: nats.StringCodec,
   connect: nats.connect,
 })
