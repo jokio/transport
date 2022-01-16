@@ -34,12 +34,7 @@ jobs:
         run: |
           deno lint
 
-      # Start MongoDB
-      - name: Start MongoDB (Linux)
-        uses: wbari/start-mongoDB@v0.2
-        with:
-          mongoDBVersion: ${{ matrix.mongo }}
-
+      # Start nats
      - name: Create Nats cluster
         uses: onichandame/nats-action@master
         with:
