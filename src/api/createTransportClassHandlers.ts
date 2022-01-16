@@ -29,17 +29,22 @@ export function createTransportClassHandlers(
           return
         }
 
-        return fn.bind(obj)(
+        const updatedCtx = {
+          ...ctx,
+          // override `metadata` and `api` in ctx with new one
+          api: createTransportApi(transport, {
+            metadata: ctx.metadata,
+          }),
+        }
+
+        return fn.bind({
+          ...obj,
+          ctx: updatedCtx,
+        })(
           /**
-           * First argument is always context (+ api)
+           * ^ Context goes as a property context
            */
-          {
-            ...ctx,
-            // override `metadata` and `api` in ctx with new one
-            api: createTransportApi(transport, {
-              metadata: ctx.metadata,
-            }),
-          },
+
           ...(Array.isArray(payload) ? payload : [payload]),
         )
       })

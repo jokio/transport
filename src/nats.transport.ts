@@ -55,6 +55,7 @@ export class NatsTransport implements Transport {
       natsServerUrls?: string[] | string
       maxPingOut?: number
       noEcho?: boolean
+      queueGroup?: string
 
       /**
        * By default will be selected NONE
@@ -214,7 +215,7 @@ export class NatsTransport implements Transport {
         : `${route}.>`
 
     const subscription = this.nc.subscribe(finalRoute, {
-      queue: options?.queueGroup,
+      queue: options?.queueGroup ?? this.options?.queueGroup,
       callback: async (err, msg) => {
         // logger.verbose('nats.transport -> on call', {
         //   route,
@@ -493,7 +494,7 @@ export class NatsTransport implements Transport {
     const resultAsError = <TransportFailedMessage>(
       (resultPayload as unknown)
     )
-    if (resultAsError.errorData) {
+    if (resultAsError?.errorData) {
       throw new TransportRpcError(resultAsError)
     }
 

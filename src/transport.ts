@@ -79,7 +79,9 @@ export type RouteHandler<TMetadata extends MessageMetadata> = (
   payload: unknown,
 ) => Promise<unknown | void> | unknown | void
 
-export type TransportContext<TMetadata extends MessageMetadata> = {
+export type TransportContext<
+  TMetadata extends MessageMetadata = DefaultMessageMetadata,
+> = {
   /**
    * Full route
    */
