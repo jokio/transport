@@ -3,7 +3,6 @@ import { createTransportHandlerMap } from '../../src/api/createTransportHandlerM
 import { NatsTransport } from '../../src/nats.transport.ts'
 import { withTransport } from '../common.ts'
 import { nats } from '../../deps.ts'
-import { TransportContext } from '../../src/transport.ts'
 import { assertEquals } from '../test.deps.ts'
 import { TransportApiContext } from '../../src/api/types.ts'
 
