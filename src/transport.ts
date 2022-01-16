@@ -3,7 +3,7 @@ export interface TransportOptions {
   metadataReducers?: MetadataReducer<MessageMetadata>[]
   metadataReducersAfterReceive?: MetadataReducer<MessageMetadata>[]
   metadataValidator?: MetadataValidator[]
-  onConnnectionStatusChange?: (status: TransportState) => void
+  onConnectionStatusChange?: (status: TransportState) => void
 }
 
 export interface TransportUtils {
@@ -77,12 +77,9 @@ export type DefaultMessageMetadata = {
   sessionId: string
 }
 
-export type RouteHandler<
-  TMetadata extends MessageMetadata,
-  TArg = unknown,
-> = (
+export type RouteHandler<TMetadata extends MessageMetadata> = (
   ctx: TransportContext<TMetadata>,
-  ...args: TArg[]
+  payload: unknown,
 ) => Promise<unknown | void> | unknown | void
 
 export type TransportContext<TMetadata extends MessageMetadata> = {
@@ -113,6 +110,7 @@ export interface ExecuteProps<TMetadata extends MessageMetadata> {
 }
 
 export type TransportState =
+  | 'INITIALISED'
   | 'CONNECTED'
   | 'CONNECTING'
   | 'DISCONNECTED'

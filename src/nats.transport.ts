@@ -1,14 +1,9 @@
 import { nats } from '../deps.ts'
 import {
   ExecuteProps,
-  // FailedMessage,
-  // FireAndForgetHandler,
   MessageMetadata,
   MetadataReducer,
-  // normalizeError,
   PublishProps,
-  // RawHandler,
-  // Referrer,
   RouteHandler,
   Transport,
   TransportContext,
@@ -17,28 +12,9 @@ import {
   TransportOptions,
   TransportState,
   TransportUtils,
-  // TransportUtils,
 } from './transport.ts'
 import { delay } from './utils/delay.ts'
 import { TransportRpcError } from './utils/transportRpc.error.ts'
-// import { delay, logger } from "@jok/shared/utils";
-// import type {
-//   Authenticator,
-//   Codec,
-//   ConnectionOptions,
-//   NatsConnection,
-//   Subscription,
-// } from "nats.ws/nats.js";
-
-// export type ConnectionStatus =
-//   | 'CONNECTED'
-//   | 'DISCONNECTED'
-//   | 'RECONNECTED'
-//   | 'RECONNECTING'
-
-// export type ConnectionStatusChangeAction = (
-//   status: ConnectionStatus,
-// ) => void
 
 export type Authenticatior =
   | { type: 'NONE' }
@@ -59,7 +35,7 @@ export class NatsTransport implements Transport {
   get state(): TransportState {
     return this._state
   }
-  _state: TransportState = 'DISCONNECTED'
+  private _state: TransportState = 'DISCONNECTED'
 
   private nc: nats.NatsConnection | null = null
   private sc: nats.Codec<string>
@@ -96,7 +72,11 @@ export class NatsTransport implements Transport {
     this.routePostfix = this.options.routePostfix ?? ''
   }
 
-  async init() {}
+  init(): Promise<void> {
+    this._state = 'INITIALISED'
+
+    return Promise.resolve()
+  }
 
   async start(
     props: {
@@ -165,8 +145,8 @@ export class NatsTransport implements Transport {
 
       // logger.info(`connected ${this.nc.getServer()}`)
 
+      this._state = 'CONNECTED'
       if (onConnectionStatusChange) {
-        this._state = 'CONNECTED'
         onConnectionStatusChange('CONNECTED')
       }
 
@@ -205,6 +185,8 @@ export class NatsTransport implements Transport {
     await this.nc.flush()
     await this.nc.drain()
     await this.nc.close()
+
+    this._state = 'DISCONNECTED'
   }
 
   on(
@@ -235,25 +217,16 @@ export class NatsTransport implements Transport {
           return
         }
 
-        let metadata: MessageMetadata = <any>{}
-        let payload: any = {}
+        let metadata: MessageMetadata = {}
+        let payload: unknown = {}
         let subject
 
         try {
           const dataString = this.sc.decode(msg.data)
           const data = this.utils.jsonDecode(dataString)
 
-          const connectionData = (
-            msg as any
-          ).publisher?.options?.authenticator()
-
-          console.log('whats connectionData', connectionData)
-
           if (options?.readRawMessage) {
-            await action(
-              { route: msg.subject, metadata: <any>{} },
-              <any>data,
-            )
+            await action({ route: msg.subject, metadata: {} }, data)
 
             // logger.verbose(
             //   'nats.transport -> readRawMessage completed successfully',
@@ -275,7 +248,7 @@ export class NatsTransport implements Transport {
             subjectParts[subjectParts.length - 1]
 
           const metadataWithUserInfo = {
-            ...(metadata as any),
+            ...metadata,
             userId: senderUserId,
             sessionId: senderSessionId,
             connectionId: msg.sid,
@@ -300,7 +273,7 @@ export class NatsTransport implements Transport {
               route: subject,
               metadata: finalMetadata,
             },
-            ...(Array.isArray(payload) ? payload : [payload]),
+            payload,
           )
 
           // logger.verbose(
@@ -313,7 +286,7 @@ export class NatsTransport implements Transport {
             msg.respond(
               this.sc.encode(
                 this.utils.jsonEncode({
-                  metadata: <any>{},
+                  metadata: {},
                   payload: result,
                 }),
               ),
@@ -322,7 +295,7 @@ export class NatsTransport implements Transport {
 
           // fire and forget
           // this.fireOnEvery(subject, payload, finalMetadata)
-        } catch (err: any) {
+        } catch (err) {
           // logger.debug('error on message', {
           //   error: err.toString(),
           // })
@@ -344,7 +317,7 @@ export class NatsTransport implements Transport {
             `failed.${msg.subject}`,
             this.sc.encode(
               this.utils.jsonEncode({
-                metadata: <any>{},
+                metadata: {},
                 payload: errorPayload,
               }),
             ),
@@ -354,7 +327,7 @@ export class NatsTransport implements Transport {
             msg.respond(
               this.sc.encode(
                 this.utils.jsonEncode({
-                  metadata: <any>{},
+                  metadata: {},
                   payload: errorPayload,
                 }),
               ),
@@ -400,7 +373,7 @@ export class NatsTransport implements Transport {
       ? this.mergeMetadata({
           metadataReducers: this.options.metadataReducers,
 
-          ctx: <any>callerCtx,
+          ctx: callerCtx,
           route,
           message: {
             payload,
@@ -414,7 +387,7 @@ export class NatsTransport implements Transport {
       this.sc.encode(
         this.utils.jsonEncode({
           payload,
-          metadata: <any>finalMetadata,
+          metadata: finalMetadata,
         }),
       ),
     )
@@ -422,7 +395,7 @@ export class NatsTransport implements Transport {
     return Promise.resolve()
   }
 
-  async execute(props: ExecuteProps<MessageMetadata>) {
+  async execute<TResult>(props: ExecuteProps<MessageMetadata>) {
     if (!this.nc) {
       throw new Error('NATS_NOT_STARTED')
     }
@@ -446,7 +419,7 @@ export class NatsTransport implements Transport {
       ? this.mergeMetadata({
           metadataReducers: this.options.metadataReducers,
 
-          ctx: <any>callerCtx,
+          ctx: callerCtx,
           route,
           message: {
             payload,
@@ -468,7 +441,7 @@ export class NatsTransport implements Transport {
         ),
         { timeout },
       )
-    } catch (err: any) {
+    } catch (err) {
       switch (err.code) {
         case '503':
           {
@@ -496,13 +469,17 @@ export class NatsTransport implements Transport {
       this.sc.decode(response.data),
     )
 
+    const resultPayload = result.payload
+
     // check if it's an error
-    const resultAsError = <TransportFailedMessage>(result as unknown)
+    const resultAsError = <TransportFailedMessage>(
+      (resultPayload as unknown)
+    )
     if (resultAsError.errorData) {
       throw new TransportRpcError(resultAsError)
     }
 
-    return result.payload as any
+    return result.payload as TResult
   }
 
   // helper functions
@@ -534,15 +511,6 @@ export class NatsTransport implements Transport {
 
     return merged
   }
-
-  // private fireOnEvery(route: string, payload: any, metadata: any) {
-  //   const tasks = this.onEveryActions
-  //     .filter(x => x.prefixes.some(y => route.startsWith(y)))
-  //     .map(x => x.action({ route, metadata, payload }))
-
-  //   // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  //   Promise.allSettled(tasks)
-  // }
 
   async dispose() {
     if (this.state !== 'CONNECTED' && this.state !== 'RECONNECTED') {
