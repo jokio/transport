@@ -41,3 +41,11 @@ export const metadataValidators = {
 export type { CallStackMetadata } from './src/metadataReducers/callStack.reducer.ts'
 export type { CreatedAtMetadata } from './src/metadataReducers/createdAt.reducer.ts'
 export type { TransactionMetadata } from './src/metadataReducers/transactionId.reducer.ts'
+
+export { createTransportApi } from './src/api/createTransportApi.ts'
+export { createTransportClassHandlers } from './src/api/createTransportClassHandlers.ts'
+export { createTransportHandlerMap } from './src/api/createTransportHandlerMap.ts'
+export type {
+  TransportApiContext,
+  TransportApi,
+} from './src/api/types.ts'

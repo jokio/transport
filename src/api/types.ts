@@ -132,3 +132,7 @@ declare type EnsurePromiseVoid<T> = T extends (
     ? (...args: A) => P
     : (...args: A) => Promise<void>
   : never
+
+export type TransportApiContext<TApi> = TransportContext & {
+  api: TransportApi<TApi & Api>
+}

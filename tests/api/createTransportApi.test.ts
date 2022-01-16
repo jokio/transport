@@ -5,6 +5,7 @@ import { withTransport } from '../common.ts'
 import { nats } from '../../deps.ts'
 import { TransportContext } from '../../src/transport.ts'
 import { assertEquals } from '../test.deps.ts'
+import { TransportApiContext } from '../../src/api/types.ts'
 
 const transport = new NatsTransport({
   natsServerUrls: ['nats://127.0.0.1:4223'],
@@ -21,7 +22,7 @@ type Api1 = {
 }
 
 class Api2 {
-  constructor(private ctx: TransportContext) {}
+  constructor(private ctx: TransportApiContext<Api1>) {}
 
   method1() {
     return true
@@ -67,15 +68,6 @@ Deno.test('api - createTransportApi', () =>
     const result1 = await api.publish.A.B.C(6, 'aa')
 
     const result2 = await api.execute.A.B.C(5, 'aa')
-
-    // const result3 = await api
-    //   .config({ rpcTimeout: 1000 })
-    //   .execute.A.B.C(5, 'aa')
-
-    // const result4 = await api.publish.method3({
-    //   username: 'ez',
-    //   password: 'ez',
-    // })
 
     assertEquals(result1, undefined)
     assertEquals(result2, '5aa')
