@@ -41,7 +41,7 @@ jobs:
           port: '4223' # multiple different ports will start a cluster. single port will start a single server
 
       # Tests
-      - name: Test TS
+      - name: Test
         run: deno test -A --no-check
 
       # Build
