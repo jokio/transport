@@ -40,7 +40,7 @@ export class NatsTransport implements Transport {
   private nc: nats.NatsConnection | null = null
   private sc: nats.Codec<string>
   private routeSubscriptions = new Map<string, nats.Subscription[]>()
-  private readonly routePostfix
+  private routePostfix = ''
 
   constructor(
     protected options: TransportOptions & {
@@ -60,8 +60,6 @@ export class NatsTransport implements Transport {
        * By default will be selected NONE
        */
       authentication?: Authenticatior
-
-      routePostfix?: string
     },
     protected utils: TransportUtils = {
       jsonDecode: JSON.parse,
@@ -69,11 +67,13 @@ export class NatsTransport implements Transport {
     },
   ) {
     this.sc = this.options.StringCodec()
-    this.routePostfix = this.options.routePostfix ?? ''
   }
 
-  init(): Promise<void> {
+  init(data?: { userId: string; sessionId: string }): Promise<void> {
+    const { userId = '', sessionId = '' } = data ?? {}
+
     this._state = 'INITIALISED'
+    this.routePostfix = `${userId}.${sessionId}`
 
     return Promise.resolve()
   }
@@ -86,6 +86,13 @@ export class NatsTransport implements Transport {
       natsServerUrls?: string[] | string
     } = {},
   ) {
+    if (
+      this._state !== 'INITIALISED' &&
+      this._state !== 'DISCONNECTED'
+    ) {
+      throw new Error('INVALID_STATE_TO_START')
+    }
+
     if (props.metadataReducers?.length) {
       this.options.metadataReducers = (
         this.options.metadataReducers ?? []
