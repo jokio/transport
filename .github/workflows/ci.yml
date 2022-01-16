@@ -35,10 +35,10 @@ jobs:
           deno lint
 
       # Start nats
-     - name: Create Nats cluster
+      - name: Create Nats cluster
         uses: onichandame/nats-action@master
         with:
-          port: "4223" # multiple different ports will start a cluster. single port will start a single server
+          port: '4223' # multiple different ports will start a cluster. single port will start a single server
 
       # Tests
       - name: Test TS
