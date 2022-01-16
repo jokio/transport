@@ -60,7 +60,7 @@ Deno.test('api - createTransportApi', () =>
         },
       },
       rawMessages: {
-        ['A.B.C']: (_, data) => {},
+        ['A.B.C']: _ => {},
       },
     })
 
