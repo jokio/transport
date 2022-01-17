@@ -3,5 +3,5 @@ Lightweight abstraction to combine power of nats & typescript. Send messages fro
 
 ##
 [![npm version](https://badge.fury.io/js/jok_transport.svg)](https://badge.fury.io/js/jok_transport)
-[![codecov](https://codecov.io/gh/jokio/transport/branch/master/graph/badge.svg?token=Qx415qn0GC)](https://codecov.io/gh/jokio/transport)
-[![Build Status](https://github.com/jokio/transport/workflows/ci/badge.svg?branch=master&event=push)](https://github.com/jokio/transport/actions)
+[![codecov](https://codecov.io/gh/jokio/transport/branch/main/graph/badge.svg?token=Qx415qn0GC)](https://codecov.io/gh/jokio/transport)
+[![Build Status](https://github.com/jokio/transport/workflows/ci/badge.svg?branch=main&event=push)](https://github.com/jokio/transport/actions)
