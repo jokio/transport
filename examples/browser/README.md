@@ -1,4 +1,4 @@
-## Transport - node.js
+## Transport - browser
 
 1. Install npm packages:
 ```
