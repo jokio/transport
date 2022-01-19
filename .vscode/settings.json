@@ -2,5 +2,5 @@
   "deno.enable": true,
   "deno.lint": true,
   "deno.unstable": true,
-  "deno.codeLens.testArgs": ["--allow-all", "--no-check"]
+  "deno.codeLens.testArgs": ["--allow-all"]
 }

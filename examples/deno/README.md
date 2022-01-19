@@ -2,7 +2,7 @@
 
 1. Run the script:
 ```
-deno run -A --no-check basic.ts
+deno run -A basic.ts
 ```
 
 Keep in mind that nats server should be started on the default 4222 port.

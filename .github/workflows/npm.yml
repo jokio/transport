@@ -38,15 +38,15 @@ jobs:
       - name: Create Nats cluster
         uses: onichandame/nats-action@master
         with:
-          port: '4223' # multiple different ports will start a cluster. single port will start a single server
+          port: '4222' # multiple different ports will start a cluster. single port will start a single server
 
       # Tests
       - name: Test
-        run: deno test -A --no-check
+        run: deno test -A
 
       # Build
       - name: Build for npm
-        run: deno run --no-check -A build_npm.ts ${GITHUB_REF/refs\/tags\/v/}
+        run: deno run -A build_npm.ts ${GITHUB_REF/refs\/tags\/v/}
 
       # Prepare npm for publish
       - uses: actions/setup-node@v2

@@ -35,11 +35,11 @@ jobs:
       - name: Create Nats cluster
         uses: onichandame/nats-action@master
         with:
-          port: '4223' # multiple different ports will start a cluster. single port will start a single server
+          port: '4222' # multiple different ports will start a cluster. single port will start a single server
 
       # Tests
       - name: Test TS
-        run: deno test -A --no-check --coverage=./cov --doc
+        run: deno test -A --coverage=./cov --doc
 
       - name: Generate lcov
         shell: bash

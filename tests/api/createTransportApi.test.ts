@@ -7,7 +7,7 @@ import { assertEquals } from '../test.deps.ts'
 import { TransportApiContext } from '../../src/api/types.ts'
 
 const transport = new NatsTransport({
-  natsServerUrls: ['nats://127.0.0.1:4223'],
+  natsServerUrls: ['nats://127.0.0.1:4222'],
   StringCodec: nats.StringCodec,
   connect: nats.connect,
 })
