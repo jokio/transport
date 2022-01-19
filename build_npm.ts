@@ -10,7 +10,7 @@ await build({
     deno: true,
   },
   mappings: {
-    'https://deno.land/x/nats@v1.4.0/src/mod.ts': {
+    'https://deno.land/x/nats@v1.5.0/src/mod.ts': {
       name: 'nats',
       version: '2.4.0',
     },
