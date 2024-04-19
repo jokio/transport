@@ -4,7 +4,7 @@ import { Api, TransportHandlerMap } from './types.ts'
 import { propertiesListWithLeafs } from './propertiesListWithLeafs.ts'
 import { createTransportApi } from './createTransportApi.ts'
 
-export function createTransportHandlerMap<
+export async function createTransportHandlerMap<
   TApi,
   TContext = unknown,
   TMetadata = any,
@@ -14,6 +14,8 @@ export function createTransportHandlerMap<
   handlerMap: TransportHandlerMap<TApi & Api, TContext, TMetadata>,
   // queueGroup?: string,
 ) {
+  await transport.isConnected
+
   const { rawMessages, ...mapTree } = handlerMap
 
   const registeredRoutes = propertiesListWithLeafs(mapTree, ['_'])

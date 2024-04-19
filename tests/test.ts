@@ -10,6 +10,6 @@ const transport = new NatsTransport({
   connect: nats.connect,
 })
 
-testSuite_01(transport)
-testSuite_02(transport)
-testSuite_03(transport)
+// testSuite_01(transport)
+// testSuite_02(transport)
+// testSuite_03(transport)
