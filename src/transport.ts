@@ -14,6 +14,8 @@ export interface TransportUtils {
 export interface Transport {
   readonly state: TransportState
 
+  isConnected: Promise<boolean>
+
   /**
    * Make sure all entities are initialized
    */

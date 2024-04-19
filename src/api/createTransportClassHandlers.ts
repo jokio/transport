@@ -1,11 +1,13 @@
 import { createTransportApi } from './createTransportApi.ts'
 import { Transport } from '../transport.ts'
 
-export function createTransportClassHandlers(
+export async function createTransportClassHandlers(
   prefix: string,
   obj: Record<string, unknown>,
   transport: Transport,
 ) {
+  await transport.isConnected
+
   const keys = Reflect.ownKeys(obj.constructor.prototype).filter(
     x => x !== 'constructor',
   )

@@ -42,6 +42,13 @@ export class NatsTransport implements Transport {
   private routeSubscriptions = new Map<string, nats.Subscription[]>()
   private routePostfix = ''
 
+  private isConnectedResolver = (_: boolean) => {};
+  public isConnected = new Promise<boolean>(
+    (resolve) => (this.isConnectedResolver = resolve)
+  );
+
+
+
   constructor(
     protected options: TransportOptions & {
       connect: (
@@ -158,6 +165,8 @@ export class NatsTransport implements Transport {
       if (onConnectionStatusChange) {
         onConnectionStatusChange('CONNECTED')
       }
+
+      this.isConnectedResolver(true)
 
       for await (const s of this.nc.status()) {
         // logger.info(`${s.type}: ${JSON.stringify(s.data)}`)
