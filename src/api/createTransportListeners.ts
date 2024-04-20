@@ -1,44 +1,49 @@
 // deno-lint-ignore-file no-explicit-any
-import type { Transport } from '../transport.ts'
+import type { MessageMetadata, Transport } from '../transport.ts'
 import type { Api, TransportHandlerMap } from './types.ts'
 import { propertiesListWithLeafs } from './propertiesListWithLeafs.ts'
 import { createTransportApi } from './createTransportApi.ts'
 
-export async function createTransportHandlerMap<
-  TApi,
-  TContext = unknown,
-  TMetadata = any,
->(
+export async function createTransportListeners<TContext = unknown>(
   transport: Transport,
-  handlerMap: TransportHandlerMap<TApi & Api, TContext, TMetadata>,
+  handlerMap: Record<
+    string,
+    (
+      ctx: { metadata: MessageMetadata } & TContext,
+      ...args: any[]
+    ) => any | Promise<any>
+  > & {
+    rawMessages?: Record<
+      string,
+      (
+        ctx: { metadata: MessageMetadata } & TContext,
+        ...args: any[]
+      ) => any | Promise<any>
+    >
+  },
   ctx?: TContext,
-  // queueGroup?: string,
 ): Promise<() => void> {
   await transport.isConnected
 
-  const { rawMessages, ...mapTree } = handlerMap
+  const { rawMessages, ...restMapping } = handlerMap
 
-  const registeredRoutes = propertiesListWithLeafs(mapTree, ['_'])
+  const unsubscribes: any[] = []
 
-  const unsubscribes = registeredRoutes
-    .filter(([_, fn]) => typeof fn === 'function')
-    .map(([route, fn]) =>
-      transport.on(route, (msgCtx, payload) => {
-        const api = createTransportApi(transport, {
-          metadata: msgCtx.metadata,
-        })
+  for (const route in restMapping) {
+    transport.on(route, (msgCtx, payload) => {
+      const fn = restMapping[route]
 
-        const innerCtx = {
-          ...ctx,
-          api,
-          metadata: msgCtx.metadata,
-        }
+      const innerCtx = {
+        ...ctx,
+        metadata: msgCtx.metadata,
+      }
 
-        const args = Array.isArray(payload) ? payload : [payload]
+      const args = Array.isArray(payload) ? payload : [payload]
 
-        return fn(innerCtx, ...args)
-      }),
-    )
+      const disposeFn = fn(innerCtx as any, ...args)
+      unsubscribes.push(disposeFn)
+    })
+  }
 
   const rawHandlerUnsubscribes = rawMessages
     ? Object.entries(rawMessages).map(([route, handler]) => {

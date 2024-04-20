@@ -1,17 +1,17 @@
 import type { nats } from '../deps.ts'
 import {
-  type ExecuteProps,
   type MessageMetadata,
   type MetadataReducer,
-  type PublishProps,
   type RouteHandler,
-  Transport,
   type TransportContext,
   type TransportFailedMessage,
   type TransportMessage,
   type TransportOptions,
   type TransportState,
   type TransportUtils,
+  type PublishOptions,
+  ExecuteOptions,
+  Transport,
 } from './transport.ts'
 import { delay } from './utils/delay.ts'
 import { TransportRpcError } from './utils/transportRpc.error.ts'
@@ -31,7 +31,7 @@ export type Authenticatior =
  * - retry on 503 (No Responder) error, after timeout/2
  */
 
-export class NatsTransport implements Transport {
+export class NatsTransport<TApi, TContext = {}> implements Transport {
   get state(): TransportState {
     return this._state
   }
@@ -321,7 +321,7 @@ export class NatsTransport implements Transport {
 
           // fire and forget
           // this.fireOnEvery(subject, payload, finalMetadata)
-        } catch (err) {
+        } catch (err: any) {
           // logger.debug('error on message', {
           //   error: err.toString(),
           // })
@@ -384,12 +384,57 @@ export class NatsTransport implements Transport {
     }
   }
 
-  publish(props: PublishProps<MessageMetadata>): Promise<void> {
+  /**
+   * Subscribes multple events and returns back one dispose function for all of them.
+   * Internally uses `on` api to subscribe individual events
+   *
+   * @returns dispose function
+   */
+  async subscribeEvents<TOverrideApi = TApi>(
+    handlerMap: Map1<
+      TOverrideApi | TApi,
+      TContext | TransportContext<MessageMetadata>
+    >,
+    options?: {
+      readRawMessage?: boolean
+      ctx?: TContext
+    },
+  ) {
+    await this.isConnected
+
+    const unsubscribes = Object.entries(handlerMap).map(
+      ([route, handler]) => {
+        // to listen low level messages
+        return this.on(
+          route,
+          (ctx, x) => {
+            const innerCtx = {
+              ...options?.ctx,
+              ...ctx,
+            }
+
+            ;(handler as any)(x, innerCtx as any)
+          },
+          { readRawMessage: options?.readRawMessage ?? false },
+        )
+      },
+    )
+
+    return () => {
+      unsubscribes.forEach(x => x())
+    }
+  }
+
+  publish<K extends keyof TApi & string>(
+    route: K,
+    payload: TApi[K],
+    options: PublishOptions<MessageMetadata> = {},
+  ): Promise<void> {
     if (!this.nc) {
       throw new Error('NATS_NOT_STARTED')
     }
 
-    const { route, payload, metadata = {}, callerCtx } = props
+    const { metadata = {}, callerCtx } = options
 
     const finalRoute = !this.routePostfix
       ? route
@@ -421,20 +466,16 @@ export class NatsTransport implements Transport {
     return Promise.resolve()
   }
 
-  async execute<TResult>(
-    props: ExecuteProps<MessageMetadata>,
+  async execute<K extends keyof TApi & string, TResult>(
+    route: K,
+    payload: TApi[K],
+    options: ExecuteOptions<MessageMetadata> = {},
   ): Promise<TResult> {
     if (!this.nc) {
       throw new Error('NATS_NOT_STARTED')
     }
 
-    const {
-      route,
-      payload,
-      metadata = {},
-      callerCtx,
-      rpcTimeout,
-    } = props
+    const { metadata = {}, callerCtx, rpcTimeout } = options
 
     const timeout =
       rpcTimeout ?? this.options.defaultRpcTimeout ?? 1000
@@ -469,7 +510,7 @@ export class NatsTransport implements Transport {
         ),
         { timeout },
       )
-    } catch (err) {
+    } catch (err: any) {
       switch (err.code) {
         case '503':
           {
@@ -547,4 +588,15 @@ export class NatsTransport implements Transport {
 
     await this.stop()
   }
+}
+
+type Map1<T, TContext, TMetadata = any> = {
+  [K in keyof T]: T[K] extends infer TPayload
+    ? (
+        data: TPayload,
+        ctx?: {
+          metadata: TMetadata
+        } & TContext,
+      ) => void | Promise<void>
+    : T[K]
 }

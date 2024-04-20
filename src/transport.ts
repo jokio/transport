@@ -51,7 +51,11 @@ export interface Transport {
   /**
    * Publish event, no result will be returned
    */
-  publish(props: PublishProps<MessageMetadata>): Promise<void>
+  publish(
+    route: string,
+    payload: unknown,
+    props?: PublishOptions<MessageMetadata>,
+  ): Promise<void>
 
   /**
    * Execute RPC call, result will be returned always
@@ -59,7 +63,9 @@ export interface Transport {
    * throws RPCTimeout error
    */
   execute<TResult = unknown>(
-    props: ExecuteProps<MessageMetadata>,
+    route: string,
+    payload: unknown,
+    options?: ExecuteOptions<MessageMetadata>,
   ): Promise<TResult>
 
   /**
@@ -95,20 +101,15 @@ export type TransportContext<
   metadata: TMetadata
 }
 
-export interface PublishProps<TMetadata extends MessageMetadata> {
-  route: string
-  payload: unknown
+export type PublishOptions<TMetadata extends MessageMetadata> = {
   metadata?: Partial<TMetadata>
   callerCtx?: TransportContext<TMetadata>
 }
 
-export interface ExecuteProps<TMetadata extends MessageMetadata> {
-  route: string
-  payload: unknown
-  metadata?: TMetadata
-  rpcTimeout?: number
-  callerCtx?: TransportContext<TMetadata>
-}
+export type ExecuteOptions<TMetadata extends MessageMetadata> =
+  PublishOptions<TMetadata> & {
+    rpcTimeout?: number
+  }
 
 export type TransportState =
   | 'INITIALISED'
