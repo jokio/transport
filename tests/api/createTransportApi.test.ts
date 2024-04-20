@@ -49,7 +49,7 @@ Deno.test('api - createTransportApi', () =>
   withTransport(transport, async () => {
     const api = createTransportApi<Api1 & TApi2>(transport)
 
-    createTransportHandlerMap<Api1>(transport, null, {
+    createTransportHandlerMap<Api1>(transport, {
       A: {
         B: {
           C: (_, a, b) => {
