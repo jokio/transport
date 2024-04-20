@@ -402,7 +402,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
    */
   async subscribeEvents<TOverrideApi = TApi>(
     handlerMap: Map1<
-      TOverrideApi | TApi,
+      TOverrideApi,
       TContext | TransportContext<MessageMetadata>
     >,
     options?: {
