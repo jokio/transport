@@ -1,7 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
 import type { MessageMetadata, Transport } from '../transport.ts'
-import type { Api, TransportHandlerMap } from './types.ts'
-import { propertiesListWithLeafs } from './propertiesListWithLeafs.ts'
 import { createTransportApi } from './createTransportApi.ts'
 
 export async function createTransportListeners<TContext = unknown>(

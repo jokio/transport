@@ -10,7 +10,7 @@ import {
   type TransportState,
   type TransportUtils,
   type PublishOptions,
-  ExecuteOptions,
+  type ExecuteOptions,
   Transport,
 } from './transport.ts'
 import { delay } from './utils/delay.ts'
@@ -31,6 +31,7 @@ export type Authenticatior =
  * - retry on 503 (No Responder) error, after timeout/2
  */
 
+// deno-lint-ignore ban-types
 export class NatsTransport<TApi, TContext = {}> implements Transport {
   get state(): TransportState {
     return this._state
@@ -321,6 +322,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
 
           // fire and forget
           // this.fireOnEvery(subject, payload, finalMetadata)
+          // deno-lint-ignore no-explicit-any
         } catch (err: any) {
           // logger.debug('error on message', {
           //   error: err.toString(),
@@ -399,7 +401,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
       readRawMessage?: boolean
       ctx?: TContext
     },
-  ) {
+  ): Promise<() => void> {
     await this.isConnected
 
     const unsubscribes = Object.entries(handlerMap).map(
@@ -413,6 +415,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
               ...ctx,
             }
 
+            // deno-lint-ignore no-explicit-any
             ;(handler as any)(x, innerCtx as any)
           },
           { readRawMessage: options?.readRawMessage ?? false },
@@ -510,6 +513,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
         ),
         { timeout },
       )
+      // deno-lint-ignore no-explicit-any
     } catch (err: any) {
       switch (err.code) {
         case '503':
@@ -590,6 +594,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
   }
 }
 
+// deno-lint-ignore no-explicit-any
 type Map1<T, TContext, TMetadata = any> = {
   [K in keyof T]: T[K] extends infer TPayload
     ? (
