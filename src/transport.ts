@@ -91,9 +91,14 @@ export type TransportContext<
   TMetadata extends MessageMetadata = DefaultMessageMetadata,
 > = {
   /**
-   * Full route
+   * Route
    */
   route: string
+
+  /**
+   * Full route
+   */
+  originalRoute: string
 
   /**
    * Request related metadata

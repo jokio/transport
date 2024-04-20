@@ -243,7 +243,14 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
           const data = this.utils.jsonDecode(dataString)
 
           if (options?.readRawMessage) {
-            await action({ route: msg.subject, metadata: {} }, data)
+            await action(
+              {
+                route: msg.subject,
+                originalRoute: msg.subject,
+                metadata: {},
+              },
+              data,
+            )
 
             // logger.verbose(
             //   'nats.transport -> readRawMessage completed successfully',
@@ -298,6 +305,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
           const result = await action(
             {
               route: subject,
+              originalRoute: msg.subject,
               metadata: finalMetadata,
             },
             payload,
