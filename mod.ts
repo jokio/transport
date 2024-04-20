@@ -12,8 +12,8 @@ export type {
   MetadataValidator,
   RouteHandler,
   TransportContext,
-  ExecuteProps,
-  PublishProps,
+  PublishOptions,
+  ExecuteOptions,
 } from './src/transport.ts'
 
 export {
