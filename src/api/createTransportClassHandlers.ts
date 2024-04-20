@@ -5,7 +5,7 @@ export async function createTransportClassHandlers(
   prefix: string,
   obj: Record<string, unknown>,
   transport: Transport,
-) {
+): Promise<() => void> {
   await transport.isConnected
 
   const keys = Reflect.ownKeys(obj.constructor.prototype).filter(

@@ -42,12 +42,10 @@ export class NatsTransport implements Transport {
   private routeSubscriptions = new Map<string, nats.Subscription[]>()
   private routePostfix = ''
 
-  private isConnectedResolver = (_: boolean) => {};
-  public isConnected = new Promise<boolean>(
-    (resolve) => (this.isConnectedResolver = resolve)
-  );
-
-
+  private isConnectedResolver = (_: boolean) => {}
+  public isConnected: Promise<boolean> = new Promise(
+    resolve => (this.isConnectedResolver = resolve),
+  )
 
   constructor(
     protected options: TransportOptions & {
@@ -423,7 +421,9 @@ export class NatsTransport implements Transport {
     return Promise.resolve()
   }
 
-  async execute<TResult>(props: ExecuteProps<MessageMetadata>) {
+  async execute<TResult>(
+    props: ExecuteProps<MessageMetadata>,
+  ): Promise<TResult> {
     if (!this.nc) {
       throw new Error('NATS_NOT_STARTED')
     }

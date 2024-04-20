@@ -13,7 +13,7 @@ export async function createTransportHandlerMap<
   ctx: TContext,
   handlerMap: TransportHandlerMap<TApi & Api, TContext, TMetadata>,
   // queueGroup?: string,
-) {
+): Promise<() => void> {
   await transport.isConnected
 
   const { rawMessages, ...mapTree } = handlerMap
