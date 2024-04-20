@@ -1,8 +1,8 @@
-import { NatsTransport } from 'https://deno.land/x/jok_transport@v0.3.2/mod.ts'
+import { NatsTransport } from 'https://deno.land/x/jok_transport@v1.0.0/mod.ts'
 import {
   StringCodec,
   connect,
-} from 'https://deno.land/x/nats@v1.4.0/src/mod.ts'
+} from 'https://deno.land/x/nats@v1.22.0/src/mod.ts'
 
 const transport = new NatsTransport({
   StringCodec,
@@ -20,9 +20,9 @@ transport.on('test', (ctx, x) => {
   return 1
 })
 
-const result = await transport.execute({
-  route: 'test',
-  payload: { somethig: 123 },
-})
+const result = await transport.execute(
+  'test',
+  { somethig: 123 },
+)
 
 console.log('result', result)

@@ -83,18 +83,14 @@ export function recursiveApiCaller(
           const isExecutable = mode === 'EXECUTE'
 
           if (isExecutable) {
-            return transport.execute({
-              route,
-              payload: args,
+            return transport.execute(route, args, {
               metadata: { ...appendMetadata, ...routeMetadata },
               callerCtx,
               rpcTimeout: options.rpcTimeout,
             })
           }
 
-          return transport.publish({
-            route,
-            payload: args,
+          return transport.publish(route, args, {
             metadata: { ...appendMetadata, ...routeMetadata },
             callerCtx,
           })

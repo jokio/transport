@@ -1,5 +1,31 @@
 {
   "version": "3",
+  "packages": {
+    "specifiers": {
+      "npm:nats@2.22.0": "npm:nats@2.22.0"
+    },
+    "npm": {
+      "nats@2.22.0": {
+        "integrity": "sha512-UQsmoQBuCoyVmChP2ZsmZzkQUbTPYT2aMcEVlaZ/MUcxOBvZlGUcrtsV6x2TCkxbCNTiBF9kgXD1Sp32yeCsmw==",
+        "dependencies": {
+          "nkeys.js": "nkeys.js@1.1.0"
+        }
+      },
+      "nkeys.js@1.1.0": {
+        "integrity": "sha512-tB/a0shZL5UZWSwsoeyqfTszONTt4k2YS0tuQioMOD180+MbombYVgzDUYHlx+gejYK6rgf08n/2Df99WY0Sxg==",
+        "dependencies": {
+          "tweetnacl": "tweetnacl@1.0.3"
+        }
+      },
+      "tweetnacl@1.0.3": {
+        "integrity": "sha512-6rt+RN7aOi1nGMyC4Xa5DdYiukl2UWCbcJft7YhxReBGQD7OAM8Pbxw6YMo4r2diNEA8FEmu32YOn9rhaiE5yw==",
+        "dependencies": {}
+      }
+    }
+  },
+  "redirects": {
+    "https://denopkg.com/chiefbiiko/base64/mod.ts": "https://denopkg.com/chiefbiiko/base64@master/mod.ts"
+  },
   "remote": {
     "https://deno.land/std@0.106.0/_util/assert.ts": "2f868145a042a11d5ad0a3c748dcf580add8a0dbc0e876eaa0026303a5488f58",
     "https://deno.land/std@0.106.0/_util/os.ts": "dfb186cc4e968c770ab6cc3288bd65f4871be03b93beecae57d657232ecffcac",

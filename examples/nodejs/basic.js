@@ -18,10 +18,10 @@ async function run() {
     return 1
   })
 
-  const result = await transport.execute({
-    route: 'test',
-    payload: { somethig: 123 },
-  })
+  const result = await transport.execute(
+    'test',
+    { somethig: 123 },
+  )
 
   console.log('result', result)
 }
