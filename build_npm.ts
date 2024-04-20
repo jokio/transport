@@ -1,4 +1,4 @@
-import { build } from 'https://deno.land/x/dnt@0.16.0/mod.ts'
+import { build } from 'https://deno.land/x/dnt@0.40.0/mod.ts'
 
 await build({
   entryPoints: ['./mod.ts'],
@@ -10,10 +10,10 @@ await build({
     deno: true,
   },
   mappings: {
-    'https://deno.land/x/nats@v1.5.0/src/mod.ts': {
-      name: 'nats',
-      version: '2.4.0',
-    },
+    // 'https://deno.land/x/nats@v1.5.0/src/mod.ts': {
+    //   name: 'nats',
+    //   version: '2.4.0',
+    // },
   },
   package: {
     // package.json properties
