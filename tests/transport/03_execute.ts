@@ -1,5 +1,5 @@
 import { assertEquals, assertRejects } from '../test.deps.ts'
-import { Transport } from '../../src/transport.ts'
+import type { Transport } from '../../src/transport.ts'
 import { withTransport } from '../common.ts'
 import { TransportRpcError } from '../../src/utils/transportRpc.error.ts'
 

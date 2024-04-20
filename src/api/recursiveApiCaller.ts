@@ -1,5 +1,5 @@
-import { MessageMetadata, Transport } from '../transport.ts'
-import { TransportApiOptions } from './types.ts'
+import type { MessageMetadata, Transport } from '../transport.ts'
+import type { TransportApiOptions } from './types.ts'
 
 export type MetadataOperator = '$'
 export type RouteVariableOperator = '_'

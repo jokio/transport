@@ -1,4 +1,4 @@
-import { TransportFailedMessage } from '../transport.ts'
+import type { TransportFailedMessage } from '../transport.ts'
 
 export class TransportRpcError extends Error {
   constructor(public transportMessage: TransportFailedMessage) {

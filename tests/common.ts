@@ -1,4 +1,4 @@
-import { Transport, TransportState } from '../src/transport.ts'
+import type { Transport, TransportState } from '../src/transport.ts'
 import { assertEquals } from './test.deps.ts'
 
 export async function withTransport(

@@ -1,4 +1,4 @@
-import { MetadataReducer } from '../transport.ts'
+import type { MetadataReducer } from '../transport.ts'
 
 /**
  * Adds new `transactionId` metadata

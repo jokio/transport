@@ -1,17 +1,17 @@
-import { nats } from '../deps.ts'
+import type { nats } from '../deps.ts'
 import {
-  ExecuteProps,
-  MessageMetadata,
-  MetadataReducer,
-  PublishProps,
-  RouteHandler,
+  type ExecuteProps,
+  type MessageMetadata,
+  type MetadataReducer,
+  type PublishProps,
+  type RouteHandler,
   Transport,
-  TransportContext,
-  TransportFailedMessage,
-  TransportMessage,
-  TransportOptions,
-  TransportState,
-  TransportUtils,
+  type TransportContext,
+  type TransportFailedMessage,
+  type TransportMessage,
+  type TransportOptions,
+  type TransportState,
+  type TransportUtils,
 } from './transport.ts'
 import { delay } from './utils/delay.ts'
 import { TransportRpcError } from './utils/transportRpc.error.ts'

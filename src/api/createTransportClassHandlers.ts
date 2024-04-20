@@ -1,5 +1,5 @@
 import { createTransportApi } from './createTransportApi.ts'
-import { Transport } from '../transport.ts'
+import type { Transport } from '../transport.ts'
 
 export async function createTransportClassHandlers(
   prefix: string,

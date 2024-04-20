@@ -1,4 +1,4 @@
-import { Transport } from '../../src/transport.ts'
+import type { Transport } from '../../src/transport.ts'
 import { withTransport } from '../common.ts'
 
 export function testSuite_01(transport: Transport) {

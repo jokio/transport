@@ -1,10 +1,10 @@
-import {
+import type {
   MessageMetadata,
   Transport,
   TransportContext,
 } from '../transport.ts'
 import { recursiveApiCaller } from './recursiveApiCaller.ts'
-import { Api, TransportApi, TransportApiOptions } from './types.ts'
+import type { Api, TransportApi, TransportApiOptions } from './types.ts'
 
 export function createTransportApi<TApi>(
   transport: Transport,

@@ -1,5 +1,5 @@
 // deno-lint-ignore-file no-explicit-any
-import { MessageMetadata, TransportContext } from '../transport.ts'
+import type { MessageMetadata, TransportContext } from '../transport.ts'
 
 export type Api = Record<string, unknown>
 

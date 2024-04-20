@@ -1,5 +1,5 @@
 import { assertEquals, assertExists } from '../test.deps.ts'
-import {
+import type {
   Transport,
   TransportContext,
   DefaultMessageMetadata,

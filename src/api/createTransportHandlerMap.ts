@@ -1,6 +1,6 @@
 // deno-lint-ignore-file no-explicit-any
-import { Transport } from '../transport.ts'
-import { Api, TransportHandlerMap } from './types.ts'
+import type { Transport } from '../transport.ts'
+import type { Api, TransportHandlerMap } from './types.ts'
 import { propertiesListWithLeafs } from './propertiesListWithLeafs.ts'
 import { createTransportApi } from './createTransportApi.ts'
 

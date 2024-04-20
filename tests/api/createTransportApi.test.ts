@@ -4,7 +4,7 @@ import { NatsTransport } from '../../src/nats.transport.ts'
 import { withTransport } from '../common.ts'
 import { nats } from '../../deps.ts'
 import { assertEquals } from '../test.deps.ts'
-import { TransportApiContext } from '../../src/api/types.ts'
+import type { TransportApiContext } from '../../src/api/types.ts'
 
 const transport = new NatsTransport({
   natsServerUrls: ['nats://127.0.0.1:4222'],

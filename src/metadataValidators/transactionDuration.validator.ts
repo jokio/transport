@@ -1,4 +1,4 @@
-import { MetadataValidator } from '../transport.ts'
+import type { MetadataValidator } from '../transport.ts'
 import { TransactionDurationError } from '../utils/transactionDuration.error.ts'
 
 export function transactionDurationValidator(
