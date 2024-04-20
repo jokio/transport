@@ -402,7 +402,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
    */
   async subscribeEvents<TOverrideApi = TApi>(
     handlerMap: Map1<
-      Partial<TOverrideApi | TApi>,
+      TOverrideApi | TApi,
       TContext | TransportContext<MessageMetadata>
     >,
     options?: {
@@ -604,7 +604,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
 
 // deno-lint-ignore no-explicit-any
 type Map1<T, TContext, TMetadata = any> = {
-  [K in keyof T]: T[K] extends infer TPayload
+  [K in keyof T]?: T[K] extends infer TPayload
     ? (
         data: TPayload,
         ctx?: {
