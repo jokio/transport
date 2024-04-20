@@ -18,7 +18,7 @@ export function testSuite_02(transport: Transport) {
         }),
       )
 
-      transport.publish({ route, payload: data })
+      transport.publish(route, data)
 
       const result = await resultTask
 
@@ -47,7 +47,7 @@ export function testSuite_02(transport: Transport) {
           }),
         )
 
-        transport.publish({ route, payload: data })
+        transport.publish(route, data)
 
         const result = await resultTask
 

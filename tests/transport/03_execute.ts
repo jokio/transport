@@ -19,10 +19,7 @@ export function testSuite_03(transport: Transport) {
           }),
         )
 
-        const executeResultTask = transport.execute({
-          route,
-          payload: data,
-        })
+        const executeResultTask = transport.execute(route, data)
 
         const result = await resultTask
         const executeResult = await executeResultTask
@@ -45,10 +42,7 @@ export function testSuite_03(transport: Transport) {
         }),
       )
 
-      const executeResultTask = transport.execute({
-        route,
-        payload: data,
-      })
+      const executeResultTask = transport.execute(route, data)
 
       await resultTask
 
