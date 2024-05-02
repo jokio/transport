@@ -450,11 +450,13 @@ export class NatsTransport<
     }
   }
 
-  subscribe(
+  async subscribe(
     getActions: (
       transport: NatsTransport<TPublishApi, TSubscribeApi, TContext>,
     ) => (() => void)[],
-  ): () => void {
+  ): Promise<() => void> {
+    await this.isConnected
+
     const unsubscribes = getActions(this)
 
     return () => {
