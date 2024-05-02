@@ -1,3 +1,4 @@
+// deno-lint-ignore-file
 import type { nats } from '../deps.ts'
 import type {
   MessageMetadata,
@@ -31,8 +32,12 @@ export type Authenticatior =
  * - retry on 503 (No Responder) error, after timeout/2
  */
 
-// deno-lint-ignore ban-types
-export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements Transport {
+export class NatsTransport<
+  TPublishApi,
+  TSubscribeApi = TPublishApi,
+  TContext = {},
+> implements Transport
+{
   get state(): TransportState {
     return this._state
   }
@@ -206,9 +211,16 @@ export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements
     this._state = 'DISCONNECTED'
   }
 
-  on(
-    route: string,
-    action: RouteHandler<MessageMetadata>,
+  // [K in keyof T]?: (
+  //   data: T[K],
+  //   ctx?: {
+  //     metadata: TMetadata
+  //   } & TContext,
+  // ) => void | Promise<void>
+
+  on<K extends keyof TSubscribeApi & string>(
+    route: K,
+    action: RouteHandler<TSubscribeApi[K], MessageMetadata>,
     options?: { queueGroup?: string; readRawMessage?: boolean },
   ): () => void {
     if (!this.nc) {
@@ -244,12 +256,13 @@ export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements
 
           if (options?.readRawMessage) {
             await action(
+              // deno-lint-ignore no-explicit-any
+              data as any,
               {
                 route: msg.subject,
                 originalRoute: msg.subject,
                 metadata: {},
               },
-              data,
             )
 
             // logger.verbose(
@@ -303,12 +316,13 @@ export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements
             : metadataWithUserInfo
 
           const result = await action(
+            // deno-lint-ignore no-explicit-any
+            payload as any,
             {
               route: subject,
               originalRoute: msg.subject,
               metadata: finalMetadata,
             },
-            payload,
           )
 
           // logger.verbose(
@@ -416,7 +430,7 @@ export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements
       ([route, handler]) => {
         // to listen low level messages
         return this.on(
-          route,
+          route as any,
           (ctx, x) => {
             const innerCtx = {
               ...options?.ctx,
@@ -430,6 +444,18 @@ export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements
         )
       },
     )
+
+    return () => {
+      unsubscribes.forEach(x => x())
+    }
+  }
+
+  subscribe(
+    getActions: (
+      transport: NatsTransport<TPublishApi, TSubscribeApi, TContext>,
+    ) => (() => void)[],
+  ): () => void {
+    const unsubscribes = getActions(this)
 
     return () => {
       unsubscribes.forEach(x => x())

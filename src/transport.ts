@@ -42,7 +42,7 @@ export interface Transport {
    */
   on(
     route: string,
-    action: RouteHandler<MessageMetadata>,
+    action: RouteHandler<unknown, MessageMetadata>,
     options?: { readRawMessage?: boolean },
   ): () => void
 
@@ -82,9 +82,9 @@ export type DefaultMessageMetadata = {
   sessionId: string
 }
 
-export type RouteHandler<TMetadata extends MessageMetadata> = (
+export type RouteHandler<TData = unknown, TMetadata extends MessageMetadata = MessageMetadata> = (
+  payload: TData,
   ctx: TransportContext<TMetadata>,
-  payload: unknown,
 ) => Promise<unknown | void> | unknown | void
 
 export type TransportContext<
