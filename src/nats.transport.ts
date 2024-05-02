@@ -1,16 +1,16 @@
 import type { nats } from '../deps.ts'
-import {
-  type MessageMetadata,
-  type MetadataReducer,
-  type RouteHandler,
-  type TransportContext,
-  type TransportFailedMessage,
-  type TransportMessage,
-  type TransportOptions,
-  type TransportState,
-  type TransportUtils,
-  type PublishOptions,
-  type ExecuteOptions,
+import type {
+  MessageMetadata,
+  MetadataReducer,
+  RouteHandler,
+  TransportContext,
+  TransportFailedMessage,
+  TransportMessage,
+  TransportOptions,
+  TransportState,
+  TransportUtils,
+  PublishOptions,
+  ExecuteOptions,
   Transport,
 } from './transport.ts'
 import { delay } from './utils/delay.ts'
