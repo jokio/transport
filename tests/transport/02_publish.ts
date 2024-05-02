@@ -13,7 +13,7 @@ export function testSuite_02(transport: Transport) {
       const data = 'Hello'
 
       const resultTask = new Promise(resolve =>
-        transport.on(route, (_, payload) => {
+        transport.on(route, (payload) => {
           resolve(payload)
         }),
       )
@@ -39,7 +39,7 @@ export function testSuite_02(transport: Transport) {
         }
 
         const resultTask = new Promise<Result>(resolve =>
-          transport.on(route, ctx => {
+          transport.on(route, (_, ctx) => {
             resolve(<Result>{
               ctx,
               route,

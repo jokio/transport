@@ -12,7 +12,7 @@ export function testSuite_03(transport: Transport) {
         const data = 'Hello'
 
         const resultTask = new Promise(resolve =>
-          transport.on(route, (_, payload) => {
+          transport.on(route, (payload) => {
             resolve(payload)
 
             return payload + '123'
