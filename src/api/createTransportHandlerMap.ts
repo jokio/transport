@@ -23,7 +23,7 @@ export async function createTransportHandlerMap<
   const unsubscribes = registeredRoutes
     .filter(([_, fn]) => typeof fn === 'function')
     .map(([route, fn]) =>
-      transport.on(route, (msgCtx, payload) => {
+      transport.on(route, (payload, msgCtx) => {
         const api = createTransportApi(transport, {
           metadata: msgCtx.metadata,
         })
