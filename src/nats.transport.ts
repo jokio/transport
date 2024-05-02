@@ -32,7 +32,7 @@ export type Authenticatior =
  */
 
 // deno-lint-ignore ban-types
-export class NatsTransport<TApi, TContext = {}> implements Transport {
+export class NatsTransport<TPublishApi, TSubscribeApi, TContext = {}> implements Transport {
   get state(): TransportState {
     return this._state
   }
@@ -400,7 +400,7 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
    *
    * @returns dispose function
    */
-  async subscribeEvents<TOverrideApi = TApi>(
+  async subscribeEvents<TOverrideApi = TSubscribeApi>(
     handlerMap: Map1<
       TOverrideApi,
       TContext | TransportContext<MessageMetadata>
@@ -436,9 +436,9 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
     }
   }
 
-  publish<K extends keyof TApi & string>(
+  publish<K extends keyof TPublishApi & string>(
     route: K,
-    payload: TApi[K],
+    payload: TPublishApi[K],
     options: PublishOptions<MessageMetadata> = {},
   ): Promise<void> {
     if (!this.nc) {
@@ -477,9 +477,9 @@ export class NatsTransport<TApi, TContext = {}> implements Transport {
     return Promise.resolve()
   }
 
-  async execute<K extends keyof TApi & string, TResult>(
+  async execute<K extends keyof TPublishApi & string, TResult>(
     route: K,
-    payload: TApi[K],
+    payload: TPublishApi[K],
     options: ExecuteOptions<MessageMetadata> = {},
   ): Promise<TResult> {
     if (!this.nc) {
