@@ -243,6 +243,10 @@ export class NatsTransport<
         ? route
         : `${route}.>`
 
+    if (this.options.debugMode) {
+      console.log('on', finalRoute, '✅')
+    }
+
     const subscription = this.nc.subscribe(finalRoute, {
       queue: options?.queueGroup ?? this.options?.queueGroup,
       callback: async (err, msg) => {
@@ -458,7 +462,7 @@ export class NatsTransport<
         // to listen low level messages
         return this.on(
           route as any,
-          (ctx, x) => {
+          (x, ctx) => {
             const innerCtx = {
               ...options?.ctx,
               ...ctx,
