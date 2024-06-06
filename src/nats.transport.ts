@@ -67,6 +67,8 @@ export class NatsTransport<
       maxPingOut?: number
       noEcho?: boolean
       queueGroup?: string
+      debugMode?: boolean
+      failedMessageRoute?: string
 
       /**
        * By default will be selected NONE
@@ -79,6 +81,9 @@ export class NatsTransport<
     },
   ) {
     this.sc = this.options.StringCodec()
+
+    this.options.failedMessageRoute =
+      this.options.failedMessageRoute ?? `failed.{{messageSubject}}`
   }
 
   init(data?: { userId: string; sessionId: string }): Promise<void> {
@@ -163,7 +168,9 @@ export class NatsTransport<
         return
       }
 
-      // logger.info(`connected ${this.nc.getServer()}`)
+      if (this.options.debugMode) {
+        console.info(`connected ${this.nc.getServer()}`)
+      }
 
       this._state = 'CONNECTED'
       if (onConnectionStatusChange) {
@@ -173,7 +180,9 @@ export class NatsTransport<
       this.isConnectedResolver(true)
 
       for await (const s of this.nc.status()) {
-        // logger.info(`${s.type}: ${JSON.stringify(s.data)}`)
+        if (this.options.debugMode) {
+          console.info(`${s.type}: ${JSON.stringify(s.data)}`)
+        }
 
         if (!onConnectionStatusChange) {
           continue
@@ -237,12 +246,16 @@ export class NatsTransport<
     const subscription = this.nc.subscribe(finalRoute, {
       queue: options?.queueGroup ?? this.options?.queueGroup,
       callback: async (err, msg) => {
-        // logger.verbose('nats.transport -> on call', {
-        //   route,
-        // })
+        if (this.options.debugMode) {
+          console.info('nats.transport -> on call', {
+            route,
+          })
+        }
 
         if (err) {
-          // logger.warn('error', { error: err.toString() })
+          if (this.options.debugMode) {
+            console.warn('error', { error: err.toString() })
+          }
           return
         }
 
@@ -265,10 +278,12 @@ export class NatsTransport<
               },
             )
 
-            // logger.verbose(
-            //   'nats.transport -> readRawMessage completed successfully',
-            //   { route, data },
-            // )
+            if (this.options.debugMode) {
+              console.info(
+                'nats.transport -> readRawMessage completed successfully',
+                { route, data },
+              )
+            }
             return
           }
 
@@ -325,11 +340,13 @@ export class NatsTransport<
             },
           )
 
-          // logger.verbose(
-          //   'nats.transport -> action completed successfully',
-          //   action,
-          //   { route, data },
-          // )
+          if (this.options.debugMode) {
+            console.info(
+              'nats.transport -> action completed successfully',
+              action,
+              { route, data },
+            )
+          }
 
           if (msg.reply) {
             msg.respond(
@@ -346,9 +363,11 @@ export class NatsTransport<
           // this.fireOnEvery(subject, payload, finalMetadata)
           // deno-lint-ignore no-explicit-any
         } catch (err: any) {
-          // logger.debug('error on message', {
-          //   error: err.toString(),
-          // })
+          if (this.options.debugMode) {
+            console.warn('error on message', {
+              error: err.toString(),
+            })
+          }
 
           const errorPayload = <TransportFailedMessage>{
             route: msg.subject,
@@ -363,15 +382,23 @@ export class NatsTransport<
             },
           }
 
-          this.nc!.publish(
-            `failed.${msg.subject}`,
-            this.sc.encode(
-              this.utils.jsonEncode({
-                metadata: {},
-                payload: errorPayload,
-              }),
-            ),
-          )
+          if (this.options.failedMessageRoute) {
+            const failedMessageRoute =
+              this.options.failedMessageRoute.replace(
+                '{{messageSubject}}',
+                msg.subject,
+              )
+
+            this.nc!.publish(
+              failedMessageRoute,
+              this.sc.encode(
+                this.utils.jsonEncode({
+                  metadata: {},
+                  payload: errorPayload,
+                }),
+              ),
+            )
+          }
 
           if (msg.reply) {
             msg.respond(
